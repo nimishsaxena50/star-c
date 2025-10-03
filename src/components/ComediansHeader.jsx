@@ -1,62 +1,87 @@
 import React, { useState } from "react";
 
 const profileImages = [
-  "https://i.pinimg.com/736x/4e/2e/ea/4e2eeae5b4f298a11e215146d5940d1c.jpg",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKw1vBfWNe2MiAZmGvXMBcYJ1i3vXGEHB4cg&s",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStqfcy_ks2foasxgED598eq2djH142d6_TsA&s",
-  "https://i.pinimg.com/736x/bf/57/ec/bf57ec4ce28ce03c07ca647f2bd4113a.jpg",
+  "https://sanjosetheaters.org/wp-content/uploads/zakir_khan_200aa.jpg", // Original Comedian Image
+  "https://i.pinimg.com/474x/29/31/fd/2931fdb2e050df8cd3b775d2c13d80fb.jpg", // New URL: Woman (will be the second image)
 ];
 
 const ComediansHeader = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isRotating, setIsRotating] = useState(false); // New state for rotation
 
-  const handleViewCategoriesClick = (e) => {
-    e.preventDefault();
-    const nextIndex = (currentImageIndex + 1) % profileImages.length;
-    setCurrentImageIndex(nextIndex);
+  const nextImage = () => {
+    setIsRotating(true); // Start rotation
+
+    // After a short delay (e.g., 500ms for rotation animation), change the image
+    setTimeout(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % profileImages.length);
+      setIsRotating(false); // Stop rotation after changing image
+    }, 500); // This delay should match your CSS transition duration for rotation
   };
 
-  const currentTitle = "Singers";
-
+  const ACCENT_COLOR_CLASS = "text-[#e76f51]"; 
+  
   return (
-    <header className="flex flex-col md:flex-row justify-between items-center md:h-[450px] relative px-6 md:px-20 py-10">
+    <header className="relative bg-[#120a1f] text-white overflow-hidden py-12 md:py-24">
       
-      {/* LEFT: Title (thoda overlap feel, but always above circle) */}
-      <div className="w-full md:w-[35%] text-center md:text-right mb-6 md:mb-0 relative z-10">
-        <h1 className="text-4xl md:text-6xl font-extrabold relative inline-block md:-mr-10">
-          {currentTitle}
-        </h1>
-      </div>
+      {/* MAIN CONTAINER */}
+      <div className="w-full flex flex-col md:flex-row items-center md:justify-between relative">
+        
+        {/* COMBINED LEFT/MOBILE TITLE & CIRCLE CONTAINER */}
+        <div className="flex justify-center md:justify-end w-full md:w-1/2 relative">
 
-      {/* CENTER: Circle with Image */}
-      <div className="relative flex flex-col items-center md:absolute left-1/2 top-1/2 transform md:-translate-x-1/2 md:-translate-y-1/2 z-0">
-        <div className="w-40 h-40 md:w-80 md:h-80 rounded-full border-4 border-pink-500 overflow-hidden shadow-2xl relative">
-          <img
-            src={profileImages[currentImageIndex]}
-            alt="Profile"
-            className="w-full h-full object-cover transition-all duration-500"
-          />
+          {/* CIRCLE IMAGE */}
+          <div className="w-60 h-60 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl relative z-10 
+              border-8 border-[#e76f51] transition-all duration-300">
+            <img
+              src={profileImages[currentImageIndex]} 
+              alt="Comedian profile"
+              // 🚨 Apply rotation class based on state
+              className={`w-full h-full object-cover transition-transform duration-500 ease-in-out ${
+                isRotating ? 'rotate-180 scale-90' : 'rotate-0 scale-100'
+              }`} 
+            />
+          </div>
+
+          {/* 'COMEDIANS' TITLE */}
+          <h1 className="
+            absolute left-0 top-1/2 -translate-y-1/2 
+            text-4xl md:text-7xl lg:text-8xl 
+            font-extrabold z-20 
+            pr-2
+            "
+          >
+            Comedians
+          </h1>
         </div>
-        <a
-          href="#"
-          onClick={handleViewCategoriesClick}
-          className="mt-4 text-pink-400 text-sm hover:text-pink-300"
-        >
-          Click here to view more
-        </a>
-      </div>
 
-      {/* RIGHT: Info */}
-      <div className="w-full md:w-[35%] text-center md:text-left mt-6 md:mt-0 relative z-10">
-        <h2 className="text-xl md:text-3xl font-semibold leading-tight">
-          Choose <br className="hidden md:inline" /> from 100+ Categories
-        </h2>
-        <a
-          href="#"
-          className="text-sm text-pink-500 hover:text-pink-400 inline-block mt-2"
-        >
-          Explore all categories →
-        </a>
+
+        {/* RIGHT SIDE TEXT: 'Choose from 100+ Categories' */}
+        <div className="mt-8 md:mt-0 md:w-1/2 flex flex-col items-center md:items-start pl-0 md:pl-24 relative z-30">
+          <h2 className="text-xl md:text-3xl font-semibold leading-tight text-center md:text-left">
+            Choose <br /> from <span className={ACCENT_COLOR_CLASS}>100+ Categories</span>
+          </h2>
+          <p className="mt-2 text-sm text-gray-400 text-center md:text-left">
+             The home where content lives. It's a personalised pocket for your fandom.
+          </p>
+          
+          {/* Explore Link */}
+          <a href="#" className={`${ACCENT_COLOR_CLASS} inline-block mt-3 border-b-2 border-transparent hover:border-b-2 hover:border-[#e76f51] pb-1 text-sm md:text-base`}>
+            Explore all categories →
+          </a>
+          
+          {/* 'Click here to view more' Button */}
+          <button
+            onClick={nextImage}
+            // Optional: Disable button during rotation to prevent rapid clicks
+            disabled={isRotating} 
+            className={`mt-6 text-sm ${ACCENT_COLOR_CLASS} border border-[#e76f51] py-1 px-4 rounded-full transition duration-300 hover:bg-[#e76f51] hover:text-white ${
+                isRotating ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
+          >
+            Click here to view more
+          </button>
+        </div>
       </div>
     </header>
   );
